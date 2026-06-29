@@ -26,6 +26,20 @@
     return d;
   }
 
+  /* ---------- Médias (image réelle + placeholder de secours) ---------- */
+  function imgUrl(key) {
+    return (typeof IMAGES !== "undefined" && IMAGES[key]) ? IMAGES[key] : "";
+  }
+  function mediaMarkup(key, label, lazy) {
+    var ph = '<div class="media-ph" data-ph="' + escapeHtml(label) + '"></div>';
+    var url = imgUrl(key);
+    if (!url) return ph;
+    return ph +
+      '<img src="' + url + '" alt="' + escapeHtml(label) + '" decoding="async"' +
+      (lazy === false ? "" : ' loading="lazy"') +
+      ' onerror="this.style.display=\'none\'">';
+  }
+
   function applyStatic() {
     document.querySelectorAll("[data-i18n]").forEach(function (el) {
       el.textContent = t(el.getAttribute("data-i18n"));
@@ -159,8 +173,7 @@
       list.forEach(function (v, i) {
         var d = veh(v.slug);
         var pts = d.points.map(function (p) { return escapeHtml(p); }).join('<span class="dot">·</span>');
-        var img = '<div class="media-ph" data-ph="' + escapeHtml(v.name) + '"></div>';
-        // Si l'image WebP existe, on l'utilisera (remplacée à l'intégration Higgsfield)
+        var img = mediaMarkup(v.slug, v.name);
         html +=
           '<article class="card reveal" data-d="' + (i % 3) + '" data-slug="' + v.slug + '" tabindex="0" role="button" aria-label="' + escapeHtml(v.name) + '">' +
             '<div class="card__media">' + img + '</div>' +
@@ -237,7 +250,7 @@
     var d = veh(slug);
     var rangeI18n = (RANGES.find(function (r) { return r.key === v.range; }) || {}).i18n;
     lastFocus = document.activeElement;
-    modal.querySelector("#mMedia").innerHTML = '<div class="media-ph" data-ph="' + escapeHtml(v.name) + '"></div>';
+    modal.querySelector("#mMedia").innerHTML = mediaMarkup(slug, v.name);
     modal.querySelector("#mRange").textContent = t(rangeI18n);
     modal.querySelector("#mName").textContent = v.name;
     modal.querySelector("#mDesc").textContent = d.desc;
