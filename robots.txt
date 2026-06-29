@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /mentions-legales.html
+Disallow: /conditions-generales.html
+Disallow: /confidentialite.html
+
+Sitemap: https://rmluxury.fr/sitemap.xml
